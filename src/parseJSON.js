@@ -10,15 +10,17 @@ var parseJSON = function(json) {
     n: '\n',
     r: '\r',
     t: '\t',
-    '"': '\"',
     '/': '\\'
   };
   var index = 0;
   var currChar = json.charAt(index);
+
   var skip = function(currChar) {
     if (currChar) {
       index++;
       return currChar;
+    } else {
+      throw new SyntaxError('End of string');
     }
   };
   var determineValue = function (currChar) {
@@ -35,27 +37,57 @@ var parseJSON = function(json) {
     }
   };
   var removeWhiteSpace = function (currChar) {
-    if (currChar <= ' ') {
+    while (currChar && currChar <= ' ') {
       skip(currChar);
     }
   };
+
   var parseString = function (currChar) {
     var resultString = '';
     if (currChar === '"') {
       while (skip()) {
-        if (escapeChars.hasOwnProperty(currChar)) {
-          resultString += escapeChars(currChar);
-          skip();
-        }
-        resultString += currChar;
         skip();
-      } 
-      return resultString;
-    } else {
-      throw new SyntaxError('Does not start with opening quote');
+        if (currChar === '"') {
+          return resultString;
+        }
+
+      //escape chars
+        
+
+
+        resultString += determineValue(currChar);    
+      }
+    
+        
     }
   };
-  var parseNumber = function (currChar) {
 
+  var parseNumber = function (currChar) {
+    var resultNumString = '';
+    if ((currChar >= '0' && currChar <= '9') || currChar === '.' || currChar === '-') {
+      resultNumString += currChar;
+      skip();
+    }
+    if (isNaN(index + 1)) {
+      return resultNumString;
+    } else {
+      throw new SyntaxError('Weird number');
+    }
+  };
+
+  var parseObject = function (currChar) {
+    var resultObj = {};
+    if (currChar === '{') {
+      skip();
+      determineValue(currChar);
+      if (nextChar === '}') {
+        return resultObj;
+      }
+    } else if (currChar === '}') {
+
+        return resultObj;
+    } else {
+      throw new SyntaxError('Does not start with opening bracket');
+    }
   };
 };

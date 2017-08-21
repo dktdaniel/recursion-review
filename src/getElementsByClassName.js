@@ -6,10 +6,10 @@
 // But instead we're going to implement it from scratch:
 var getElementsByClassName = function(className) {
   // your code here
-  var results = [];
+  var resultsSoFar = [];
   var rootElement = document.body;
-  getElementsByClassNameHelper(rootElement, className, results);
-  return results;
+  getElementsByClassNameHelper(rootElement, className, resultsSoFar);
+  return resultsSoFar;
 };
 
 var getElementsByClassNameHelper = function(rootElement, className, resultsSoFar) {
